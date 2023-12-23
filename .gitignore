@@ -1,0 +1,17 @@
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+.idea/
+.vscode/
+
+*.pyc
+__pycache__/
+*.class
+*.jar
+*.war
+*.ear
+
+/build/
+/bin/
