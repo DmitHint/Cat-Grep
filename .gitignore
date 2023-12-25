@@ -1,17 +1,13 @@
 *.log
 *.tmp
-*.swp
 .DS_Store
 
 .idea/
 .vscode/
 
-*.pyc
-__pycache__/
+*.o
+
 *.class
-*.jar
-*.war
-*.ear
 
 /build/
 /bin/
