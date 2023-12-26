@@ -2,7 +2,7 @@
 	
 CC := gcc
 CFLAGS := -std=c11 -Wall -Wextra -Werror
-LDFLAGS :=
+LDFLAGS := -D_POSIX_C_SOURCE=200809L 
 
 .PHONY: all clean
 
@@ -19,4 +19,3 @@ grep.o: grep.c
 
 clean:
 	rm -rf *.o s21_grep
-

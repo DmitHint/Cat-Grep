@@ -1,5 +1,6 @@
 *.log
 *.tmp
+*.swp
 .DS_Store
 
 .idea/
@@ -8,6 +9,3 @@
 *.o
 
 *.class
-
-/build/
-/bin/
