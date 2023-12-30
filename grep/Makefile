@@ -12,10 +12,10 @@ run: s21_grep
 	$<
 
 s21_grep: grep.o
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 grep.o: grep.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(LDFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf *.o s21_grep

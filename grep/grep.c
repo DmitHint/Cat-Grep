@@ -36,7 +36,8 @@ arguments parse_arguments(int argc, char **argv) {
         opts.pattern = optarg;
         break;
       case 'i':
-        opts.i = 1;
+        // opts.i = 1;
+        opts.i = REG_ICASE;
         break;
       case 'v':
         opts.v = 1;
@@ -94,11 +95,23 @@ void process_file(arguments arg, char *path, regex_t *reg) {
   char *line = NULL;
   size_t memlen = 0;
   int read = 0;
+  int line_count = 0;
+  int reg_count = 0;
 
   while ((read = getline(&line, &memlen, f)) != -1) {
+    line_count++;
     int result = regexec(reg, line, 0, NULL, 0);
-    if (result == 0) output_line(line, read);
+    if ((result == 0 && !arg.v) || (result != 0 && arg.v)) {
+      if (!arg.c && !arg.l) {
+        if (arg.n) printf("%d:", line_count);
+        output_line(line, read);
+      }
+      reg_count++;
+    }
   }
+  if (arg.c && !arg.l) printf("%d\n", reg_count);
+  if (arg.l && reg_count > 0) printf("%s\n", path);
+
   free(line);
   fclose(f);
 }
@@ -125,7 +138,7 @@ void print_match(regex_t *reg, char *line) {
 void output(int argc, char **argv) {
   arguments arg = parse_arguments(argc, argv);
   regex_t re;
-  int error = regcomp(&re, arg.pattern, 0);
+  int error = regcomp(&re, arg.pattern, arg.i);
   if (error) perror("Error");
   for (int i = optind; i < argc; ++i) {
     process_file(arg, argv[i], &re);
