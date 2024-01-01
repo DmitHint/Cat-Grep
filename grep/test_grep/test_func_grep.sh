@@ -31,7 +31,7 @@ declare -a extra=(
 "-in int test_5_grep.txt"
 "-c -l aboba test_1_grep.txt test_5_grep.txt"
 "-v test_1_grep.txt -e ank"
-"-noe ) test_5_grep.txt"
+"-noe ')' test_5_grep.txt"
 "-l for test_1_grep.txt test_2_grep.txt"
 "-o -e int test_4_grep.txt"
 "-e = -e out test_5_grep.txt"
@@ -43,7 +43,7 @@ declare -a extra=(
 
 testing()
 {
-    t=$(echo $@ | sed "s/VAR/$var/")
+    t=$(echo "$@" | sed "s/VAR/$var/g")
     ../s21_grep $t > test_s21_grep.log
     grep $t > test_sys_grep.log
     DIFF_RES="$(diff -s test_s21_grep.log test_sys_grep.log)"
@@ -63,7 +63,7 @@ testing()
 for i in "${extra[@]}"
 do
     var="-"
-    testing $i
+    testing "$i"
 done
 
 # 1 параметр
@@ -72,7 +72,7 @@ do
     for i in "${tests[@]}"
     do
         var="-$var1"
-        testing $i
+        testing "$i"
     done
 done
 
@@ -86,7 +86,7 @@ do
             for i in "${tests[@]}"
             do
                 var="-$var1 -$var2"
-                testing $i
+                testing "$i"
             done
         fi
     done
@@ -104,7 +104,7 @@ do
                 for i in "${tests[@]}"
                 do
                     var="-$var1 -$var2 -$var3"
-                    testing $i
+                    testing "$i"
                 done
             fi
         done
@@ -121,7 +121,7 @@ do
             for i in "${tests[@]}"
             do
                 var="-$var1$var2"
-                testing $i
+                testing "$i"
             done
         fi
     done
@@ -139,7 +139,7 @@ do
                 for i in "${tests[@]}"
                 do
                     var="-$var1$var2$var3"
-                    testing $i
+                    testing "$i"
                 done
             fi
         done
