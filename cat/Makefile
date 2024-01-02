@@ -1,8 +1,7 @@
 .SILENT:
 	
 CC := gcc
-CFLAGS := -std=c11 -Wall -Wextra -Werror
-LDFLAGS :=
+CFLAGS := -std=c11 -Wall -Wextra -Werror -D_POSIX_C_SOURCE=200809L
 
 .PHONY: all clean
 
@@ -12,7 +11,7 @@ run: s21_cat
 	$<
 
 s21_cat: cat.o
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) -o $@ $^
 
 cat.o: cat.c
 	$(CC) $(CFLAGS) -c -o $@ $<

@@ -26,14 +26,13 @@ declare -a extra=(
 
 testing()
 {
-    t=$(echo $@ | sed "s/VAR/$var/")
-    echo "T = $t"
+    t=$(echo "$@" | sed "s/VAR/$var/")
     ../s21_cat $t > test_s21_cat.log
     cat $t > test_sys_cat.log
     DIFF_RES="$(diff -s test_s21_cat.log test_sys_cat.log)"
-    echo "====== DIFF RES ======"
-    echo $DIFF_RES
-    echo "======================"
+#    echo "====== DIFF RES ======"
+#    echo $DIFF_RES
+#    echo "======================"
     (( COUNTER++ ))
     if [ "$DIFF_RES" == "Files test_s21_cat.log and test_sys_cat.log are identical" ]
     then
@@ -50,7 +49,7 @@ testing()
 for i in "${extra[@]}"
 do
     var="-"
-    testing $i
+    testing "$i"
 done
 
 # 1 параметр
@@ -59,7 +58,7 @@ do
     for i in "${tests[@]}"
     do
         var="-$var1"
-        testing $i
+        testing "$i"
     done
 done
 
@@ -73,7 +72,7 @@ do
             for i in "${tests[@]}"
             do
                 var="-$var1 -$var2"
-                testing $i
+                testing "$i"
             done
         fi
     done
@@ -91,7 +90,7 @@ do
                 for i in "${tests[@]}"
                 do
                     var="-$var1 -$var2 -$var3"
-                    testing $i
+                    testing "$i"
                 done
             fi
         done
@@ -114,7 +113,7 @@ do
                     for i in "${tests[@]}"
                     do
                         var="-$var1 -$var2 -$var3 -$var4"
-                        testing $i
+                        testing "$i"
                     done
                 fi
             done

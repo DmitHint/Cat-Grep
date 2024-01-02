@@ -1,3 +1,6 @@
+#ifndef CAT_H
+#define CAT_H
+
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,4 +17,6 @@ int show_file(arguments *args, FILE *file);
 
 arguments parse_arguments(int argc, char **argv, int *idx);
 
-int output(arguments *args, int argc, char **argv, int idx);
+int output(arguments *args, int argc, char **argv);
+
+#endif

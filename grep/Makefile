@@ -1,8 +1,7 @@
 .SILENT:
 	
 CC := gcc
-CFLAGS := -std=c11 -Wall -Wextra -Werror
-LDFLAGS := -D_POSIX_C_SOURCE=200809L 
+CFLAGS := -std=c11 -Wall -Wextra -Werror -D_POSIX_C_SOURCE=200809L
 
 .PHONY: all clean
 
@@ -12,10 +11,10 @@ run: s21_grep
 	$<
 
 s21_grep: grep.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) -o $@ $^
 
 grep.o: grep.c
-	$(CC) $(LDFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf *.o s21_grep
