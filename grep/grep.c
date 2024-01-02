@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
         process_file(arg, argv[i], re_list);
     }
 
+
     for (int i = 0; i < arg.patterns_len; i++) {
         free(arg.patterns[i]);
     }
@@ -41,6 +42,7 @@ void regs_from_file(arguments *opts, char *reg_path) {
     char *line = NULL;
     size_t memlen = 0;
     while ((getline(&line, &memlen, f)) != -1) {
+        line[strcspn(line, "\n")] = '\0';
         pattern_add(opts, line);
     }
 
@@ -98,7 +100,8 @@ arguments parse_arguments(int argc, char **argv) {
     }
 
     if (opts.patterns[0] == NULL)
-        pattern_add(&opts, argv[optind++]);
+        if (argv[optind])
+            pattern_add(&opts, argv[optind++]);
 
     if (argc - optind == 1) {
         opts.h = 1;
@@ -114,7 +117,26 @@ void output_line(char *line, int len) {
     if (line[len - 1] != '\n') putchar('\n');
 }
 
-// void process_file(arguments arg, char *path, regex_t *reg) {
+
+int checkLine(regex_t *re_list, arguments arg, char *line) {
+    if (arg.v) {
+        for (int i = 0; i < arg.patterns_len; i++) {
+            regex_t *re = &re_list[i];
+            int result = regexec(re, line, 0, NULL, 0);
+            if (result == 0) return -1;
+        }
+        return 0;
+    } else {
+        for (int i = 0; i < arg.patterns_len; i++) {
+            regex_t *re = &re_list[i];
+            int result = regexec(re, line, 0, NULL, 0);
+            if (result == 0) return i;
+        }
+        return -1;
+    }
+
+}
+
 void process_file(arguments arg, char *path, regex_t *re_list) {
     FILE *f = fopen(path, "r");
     if (f == NULL) {
@@ -127,33 +149,28 @@ void process_file(arguments arg, char *path, regex_t *re_list) {
 
     char *line = NULL;
     size_t memlen = 0;
-    int read = 0;
+    int read;
     int line_count = 0;
     int reg_count = 0;
 
     while ((read = getline(&line, &memlen, f)) != -1) {
         line_count++;
-        bool isResult = false;
-        for (int i = 0; !isResult && i < arg.patterns_len; i++) {
-            regex_t *re = &re_list[i];
 
-            int result = regexec(re, line, 0, NULL, 0);
+        int re_idx = checkLine(re_list, arg, line);
 
-            if ((result == 0 && !arg.v) || (result != 0 && arg.v)) {
-                if (!arg.c && !arg.l) {
-                    if (!arg.h) printf("%s:", path);
-                    if (arg.n) printf("%d:", line_count);
-                    if (arg.o) {
-                        print_match(re, line);
-
-                    } else {
-                        output_line(line, read);
-                    }
+        if (re_idx != -1) {
+            if (!arg.c && !arg.l) {
+                if (!arg.h && !arg.o) printf("%s:", path);
+                if (arg.n && !arg.o) printf("%d:", line_count);
+                if (arg.o) {
+                    print_match(&re_list[re_idx], line, line_count, arg, path);
+                } else {
+                    output_line(line, read);
                 }
-                reg_count++;
-                isResult = true;
             }
+            reg_count++;
         }
+
     }
 
     if (arg.l && reg_count > 0) printf("%s\n", path);
@@ -168,23 +185,16 @@ void process_file(arguments arg, char *path, regex_t *re_list) {
     fclose(f);
 }
 
-void print_match(regex_t *re, char *line) {
-    regmatch_t match;
-    int offset = 0;
-    while (true) {
-        int result = regexec(re, line + offset, 1, &match, 0);
+void print_match(regex_t *re, char *line, int line_count, arguments args, char *path) {
+    regmatch_t matches[1];
+    size_t offset = 0;
+    while (regexec(re, line + offset, 1, matches, 0) == 0) {
+        if (!args.h)
+            printf("%s:", path);
+        if (args.n)
+            printf("%d:", line_count);
 
-        if (result != 0)
-            break;
-
-
-        for (int i = match.rm_so; i < match.rm_eo; ++i) {
-            putchar(line[i]);
-        }
-        putchar('\n');
-//        offset += match.rm_eo;
-        offset += match.rm_eo + 1;
+        printf("%.*s\n", (int) (matches[0].rm_eo - matches[0].rm_so), line + offset + matches[0].rm_so);
+        offset += matches[0].rm_eo;
     }
-
 }
-

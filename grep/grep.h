@@ -34,6 +34,6 @@ void output_line(char *line, int len);
 
 void process_file(arguments arg, char *path, regex_t *re_list);
 
-void print_match(regex_t *re, char *line);
+void print_match(regex_t *re, char *line, int line_count, arguments args, char *path);
 
 #endif
