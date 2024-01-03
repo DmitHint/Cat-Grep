@@ -30,9 +30,6 @@ testing()
     ../s21_cat $t > test_s21_cat.log
     cat $t > test_sys_cat.log
     DIFF_RES="$(diff -s test_s21_cat.log test_sys_cat.log)"
-#    echo "====== DIFF RES ======"
-#    echo $DIFF_RES
-#    echo "======================"
     (( COUNTER++ ))
     if [ "$DIFF_RES" == "Files test_s21_cat.log and test_sys_cat.log are identical" ]
     then

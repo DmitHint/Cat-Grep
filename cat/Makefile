@@ -17,4 +17,4 @@ cat.o: cat.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf *.o s21_cat
+	rm -rf *.o s21_cat ./test_cat/test_s21_cat.log

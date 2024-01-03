@@ -9,14 +9,14 @@ typedef struct arguments {
   int b, n, s, E, T, v;
 } arguments;
 
-void printNumLeft(int *counter, int isNewLine);
+arguments parse_arguments(int argc, char **argv);
 
 char change_v(char ch);
 
-int show_file(arguments *args, FILE *file);
-
-arguments parse_arguments(int argc, char **argv, int *idx);
+int show_file(arguments *args, FILE *file, int *line_count);
 
 int output(arguments *args, int argc, char **argv);
+
+void print_line(arguments args, char *line, int len);
 
 #endif
