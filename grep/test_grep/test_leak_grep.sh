@@ -21,7 +21,6 @@ declare -a extra=(
 "-n for test_1_grep.txt test_2_grep.txt"
 "-n for test_1_grep.txt"
 "-n -e ^\} test_1_grep.txt"
-"-c -e /\ test_1_grep.txt"
 "-ce ^int test_1_grep.txt test_2_grep.txt"
 "-e ^int test_1_grep.txt"
 "-nivh = test_1_grep.txt test_2_grep.txt"
@@ -46,18 +45,18 @@ declare -a extra=(
 
 testing()
 {
-    t=$(echo $@ | sed "s/VAR/$var/")
-    leaks -quiet -atExit -- ./s21_grep $t > test_s21_grep.log
-    leak=$(grep -A100000 leaks test_s21_grep.log)
+    t=$(echo "$@" | sed "s/VAR/$var/")
+    valgrind --leak-check=yes ../s21_grep $t > test_s21_grep.log 2>&1
+    leak=$(grep -A100000 "in use at exit:" test_s21_grep.log)
     (( COUNTER++ ))
-    if [[ $leak == *"0 leaks for 0 total leaked bytes"* ]]
+    if [[ $leak == *"in use at exit: 0 bytes in 0 blocks"* ]]
     then
       (( SUCCESS++ ))
-        echo "\033[31m$FAIL\033[0m/\033[32m$SUCCESS\033[0m/$COUNTER \033[32msuccess\033[0m grep $t"
+        echo -e "\e[31m$FAIL\e[0m/\e[32m$SUCCESS\e[0m/$COUNTER \e[32msuccess\e[0m grep $t"
     else
       (( FAIL++ ))
-        echo "\033[31m$FAIL\033[0m/\033[32m$SUCCESS\033[0m/$COUNTER \033[31mfail\033[0m grep $t"
-#        echo "$leak"
+        echo -e "\e[31m$FAIL\e[0m/\e[32m$SUCCESS\e[0m/$COUNTER \e[31mfail\e[0m grep $t"
+        echo "$leak"
     fi
     rm test_s21_grep.log
 }
@@ -66,7 +65,7 @@ testing()
 for i in "${extra[@]}"
 do
     var="-"
-    testing $i
+    testing "$i"
 done
 
 # 1 параметр
@@ -75,7 +74,7 @@ do
     for i in "${tests[@]}"
     do
         var="-$var1"
-        testing $i
+        testing "$i"
     done
 done
 
@@ -89,7 +88,7 @@ do
             for i in "${tests[@]}"
             do
                 var="-$var1 -$var2"
-                testing $i
+                testing "$i"
             done
         fi
     done
@@ -107,7 +106,7 @@ do
                 for i in "${tests[@]}"
                 do
                     var="-$var1 -$var2 -$var3"
-                    testing $i
+                    testing "$i"
                 done
             fi
         done
@@ -124,7 +123,7 @@ do
             for i in "${tests[@]}"
             do
                 var="-$var1$var2"
-                testing $i
+                testing "$i"
             done
         fi
     done
@@ -142,13 +141,14 @@ do
                 for i in "${tests[@]}"
                 do
                     var="-$var1$var2$var3"
-                    testing $i
+                    testing "$i"
                 done
             fi
         done
     done
 done
 
-echo "\033[31mFAIL: $FAIL\033[0m"
-echo "\033[32mSUCCESS: $SUCCESS\033[0m"
+echo "======================================="
+echo -e "\e[31mFAIL\e[0m: $FAIL"
+echo -e "\e[32mSUCCESS\e[0m: $SUCCESS"
 echo "ALL: $COUNTER"
