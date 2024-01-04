@@ -47,9 +47,9 @@ testing()
 {
     t=$(echo "$@" | sed "s/VAR/$var/")
     valgrind --leak-check=yes ../s21_grep $t > test_s21_grep.log 2>&1
-    leak=$(grep -A100000 "in use at exit:" test_s21_grep.log)
+    leak=$(grep -A100000 "ERROR SUMMARY:" test_s21_grep.log)
     (( COUNTER++ ))
-    if [[ $leak == *"in use at exit: 0 bytes in 0 blocks"* ]]
+    if [[ $leak == *"0 errors from 0 contexts"* ]]
     then
       (( SUCCESS++ ))
         echo -e "\e[31m$FAIL\e[0m/\e[32m$SUCCESS\e[0m/$COUNTER \e[32msuccess\e[0m grep $t"

@@ -13,9 +13,9 @@ arguments parse_arguments(int argc, char **argv);
 
 char change_v(char ch);
 
-int show_file(arguments *args, FILE *file, int *line_count);
+int show_file(const arguments *args, FILE *file, int *line_count);
 
-int output(arguments *args, int argc, char **argv);
+int output(const arguments *args, int argc, char **argv);
 
 void print_line(arguments args, char *line, int len);
 

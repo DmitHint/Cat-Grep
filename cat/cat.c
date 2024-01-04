@@ -36,7 +36,7 @@ void print_line(arguments args, char *line, int len) {
   }
 }
 
-int show_file(arguments *args, FILE *file, int *line_count) {
+int show_file(const arguments *args, FILE *file, int *line_count) {
   char *line = NULL;
   size_t memlen = 0;
   int read;
@@ -118,11 +118,10 @@ arguments parse_arguments(int argc, char **argv) {
   return args;
 }
 
-int output(arguments *args, int argc, char **argv) {
-  FILE *file;
+int output(const arguments *args, int argc, char **argv) {
   int line_count = 1;
   for (int i = optind; i < argc; i++) {
-    file = fopen(argv[i], "r");
+    FILE *file = fopen(argv[i], "r");
     if (file == NULL) {
       fprintf(stderr, "cat: %s: No such file or directory\n", argv[i]);
       perror("");

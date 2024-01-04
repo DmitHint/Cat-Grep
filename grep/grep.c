@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void pattern_add(arguments *opts, char *pattern) {
+void pattern_add(arguments *opts, const char *pattern) {
   opts->patterns =
       realloc(opts->patterns, sizeof(char *) * (++opts->patterns_len));
   opts->patterns[opts->patterns_len - 1] =
@@ -35,7 +35,7 @@ void pattern_add(arguments *opts, char *pattern) {
   strcpy(opts->patterns[opts->patterns_len - 1], pattern);
 }
 
-void regs_from_file(arguments *opts, char *reg_path) {
+void regs_from_file(arguments *opts, const char *reg_path) {
   FILE *f = fopen(reg_path, "r");
 
   if (f == NULL) {
@@ -108,7 +108,7 @@ arguments parse_arguments(int argc, char **argv) {
     }
   }
 
-  if (args.patterns[0] == NULL)
+  if (args.e == 0 && args.f == 0)
     if (argv[optind]) pattern_add(&args, argv[optind++]);
 
   if (argc - optind == 1) {
@@ -118,7 +118,7 @@ arguments parse_arguments(int argc, char **argv) {
   return args;
 }
 
-void output_line(char *line, int len) {
+void output_line(const char *line, int len) {
   for (int i = 0; i < len; ++i) {
     putchar(line[i]);
   }
@@ -143,7 +143,7 @@ int check_line(regex_t *re_list, arguments arg, char *line) {
   }
 }
 
-void process_file(arguments arg, char *path, regex_t *re_list) {
+void process_file(arguments arg, const char *path, regex_t *re_list) {
   FILE *f = fopen(path, "r");
   if (f == NULL) {
     if (!arg.s) {
@@ -190,7 +190,7 @@ void process_file(arguments arg, char *path, regex_t *re_list) {
 }
 
 void print_match(regex_t *re, char *line, int line_count, arguments args,
-                 char *path) {
+                 const char *path) {
   regmatch_t matches[1];
   size_t offset = 0;
   while (regexec(re, line + offset, 1, matches, 0) == 0) {
