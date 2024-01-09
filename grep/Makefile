@@ -5,8 +5,8 @@ CFLAGS := -std=c11 -Wall -Wextra -Werror -D_POSIX_C_SOURCE=200809L -g
 
 .PHONY: all clean
 
-all: my_grep
-	
+all: my_grep tests clean
+
 run: my_grep
 	$<
 

@@ -5,8 +5,8 @@ CFLAGS := -std=c11 -Wall -Wextra -Werror -D_POSIX_C_SOURCE=200809L
 
 .PHONY: all clean
 
-all: my_cat
-	
+all: my_cat tests clean
+
 run: my_cat
 	$<
 
